@@ -25,7 +25,9 @@ int32_t main(int32_t argc,char* argv[])
 		printf("\n");
 	}
 
-	assert(argc >= Argument::NumArgument);
+	system("pause");
+
+	//assert(argc >= Argument::NumArgument);
 
 	//COMƒ‰ƒCƒuƒ‰ƒŠ‚Ì‰Šú‰»
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
