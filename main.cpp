@@ -25,8 +25,6 @@ int32_t main(int32_t argc,char* argv[])
 		printf("\n");
 	}
 
-	system("pause");
-
 	//assert(argc >= Argument::NumArgument);
 
 	//COMライブラリの初期化
@@ -41,7 +39,5 @@ int32_t main(int32_t argc,char* argv[])
 
 	//COMライブラリの終了
 	CoUninitialize();
-
-	system("pause");
 	return 0;
 }
