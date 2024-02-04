@@ -1,13 +1,13 @@
 #include "TextureConverter.h"
 #include <stringapiset.h>
 
-void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath)
+void TextureConverter::ConvertTextureWICToDDS(const std::string& filePath, int numOptions, char* options[])
 {
 	//テクスチャファイルを読み込む
 	LoadWICTextureFromFile(filePath);
 
 	//DDS形式に変換して書き出す
-	SaveDDSTextureToFile();
+	SaveDDSTextureToFile(numOptions, options);
 }
 
 void TextureConverter::SeparateFilePath(const std::wstring& filePath)
@@ -58,13 +58,25 @@ void TextureConverter::SeparateFilePath(const std::wstring& filePath)
 	fileName_ = exceptExt;
 }
 
-void TextureConverter::SaveDDSTextureToFile()
+void TextureConverter::SaveDDSTextureToFile(int numOptions, char* options[])
 {
 	HRESULT result;
+	size_t mipLevel = 0;
+
+	//ミップマップレベル指定を検索
+	for (uint16_t i = 0; i < numOptions; i++)
+	{
+		if (std::string(options[i]) == "-ml")
+		{
+			//ミップレベル指定
+			mipLevel = std::stoi(options[i + 1]);
+			break;
+		}
+	}
 
 	DirectX::ScratchImage mipChain;
 	//ミップマップ生成
-	result = DirectX::GenerateMipMaps(scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, 0, mipChain);
+	result = DirectX::GenerateMipMaps(scratchImage_.GetImages(), scratchImage_.GetImageCount(), scratchImage_.GetMetadata(), DirectX::TEX_FILTER_DEFAULT, mipLevel, mipChain);
 	if (SUCCEEDED(result))
 	{
 		//イメージとメタデータを、ミップマップ版で置き換える
@@ -79,7 +91,7 @@ void TextureConverter::SaveDDSTextureToFile()
 
 	if (SUCCEEDED(result))
 	{
-		scratchImage_= std::move(converted);
+		scratchImage_ = std::move(converted);
 		metadata_ = scratchImage_.GetMetadata();
 	}
 
@@ -121,4 +133,15 @@ std::wstring TextureConverter::ConvertMultiByteStringToWideString(const std::str
 	MultiByteToWideChar(CP_ACP, 0, mString.c_str(), -1, &wString[0], filePathBufferSize);
 
 	return wString;
+}
+
+void TextureConverter::OutPutUsage()
+{
+	printf("画像ファイルをWIC形式からDDS形式に変換します。\n");
+	printf("\n");
+	printf("TextureConverter[ドライブ:][パス][ファイル名][-ml Level]\n");
+	printf("\n");
+	printf("[ドライブ:][パス][ファイル名]:変換したいWIC形式の画像ファイルを指定します。\n");
+	printf("\n");
+	printf("[-ml Level]:ミップレベルを指定します。0を指定すると|x|までのフルミップマップチェーンを生成します。");
 }

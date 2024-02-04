@@ -16,26 +16,28 @@ enum Argument
 
 int32_t main(int32_t argc,char* argv[])
 {
-	//argvの数だけ繰り返す
-	for (int32_t i = 0; i < argc; i++)
-	{
-		//文字列argvのi番を表示
-		printf(argv[i]);
-		//改行
-		printf("\n");
-	}
+	//テクスチャコンバーター
+	std::unique_ptr<TextureConverter>converter = std::make_unique<TextureConverter>();
 
-	//assert(argc >= Argument::NumArgument);
+	//コマンドライン引数指定なし
+	if (argc < NumArgument)
+	{
+		//使い方を表示する
+		converter->OutPutUsage();
+		return 0;
+	}
 
 	//COMライブラリの初期化
 	HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
 	assert(SUCCEEDED(hr));
 
-	//テクスチャコンバーター
-	std::unique_ptr<TextureConverter>converter = std::make_unique<TextureConverter>();
+	//オプションの数
+	int numOptions = argc - NumArgument;
+	//オプション配列
+	char** options = argv + NumArgument;
 
 	//テクスチャの変換
-	converter->ConvertTextureWICToDDS(argv[Argument::FilePath]);
+	converter->ConvertTextureWICToDDS(argv[Argument::FilePath], numOptions, options);
 
 	//COMライブラリの終了
 	CoUninitialize();

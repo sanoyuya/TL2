@@ -25,7 +25,7 @@ public:
 	/// テクスチャをWICからDDSに変換する
 	/// </summary>
 	/// <param name="filePath">ファイルパス</param>
-	void ConvertTextureWICToDDS(const std::string& filePath);
+	void ConvertTextureWICToDDS(const std::string& filePath, int numOptions = 0, char* options[] = nullptr);
 
 	/// <summary>
 	/// フォルダパスとファイル名を分離する
@@ -36,7 +36,12 @@ public:
 	/// <summary>
 	/// DDSテクスチャとしてファイル書き出し
 	/// </summary>
-	void SaveDDSTextureToFile();
+	void SaveDDSTextureToFile(int numOptions,char* options[]);
+
+	/// <summary>
+	/// 使用方法を出力(表示)する
+	/// </summary>
+	void OutPutUsage();
 
 private:
 
